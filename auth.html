@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KOLoKOI — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --white:     #ffffff;
+    --off-white: #fafaf9;
+    --subtle:    #f5f4f1;
+    --rule:      #e8e6e1;
+    --ink:       #1a1917;
+    --ink-2:     #3d3b38;
+    --ink-3:     #6b6860;
+    --ink-4:     #9c9a96;
+    --ink-5:     #c8c6c0;
+    --accent:    #c0392b;
+    --green:     #15803d;
+    --green-s:   #f0fdf4;
+    --amber:     #b45309;
+    --amber-s:   #fffbeb;
+    --blue:      #1d4ed8;
+    --blue-s:    #eff6ff;
+    --r:         6px; --r-lg: 12px;
+    --shadow-md: 0 4px 24px rgba(0,0,0,0.09), 0 0 0 1px rgba(0,0,0,0.04);
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--off-white);
+    font-family: 'Geist', -apple-system, sans-serif;
+    font-size: 13.5px; color: var(--ink);
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Layout ── */
+  .auth-wrap {
+    width: 100%; max-width: 440px;
+    padding: 24px 16px;
+  }
+
+  .brand {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .brand-mark {
+    width: 40px; height: 40px;
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: 'Instrument Serif', serif;
+    font-size: 16px; margin-bottom: 12px;
+  }
+  .brand-name {
+    font-family: 'Instrument Serif', serif;
+    font-size: 26px; letter-spacing: -0.5px;
+    display: block;
+  }
+  .brand-sub {
+    font-size: 12px; color: var(--ink-4);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin-top: 2px; display: block;
+  }
+
+  /* ── Card ── */
+  .auth-card {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+  }
+
+  /* ── View toggle (Login / Register) ── */
+  .auth-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--rule);
+  }
+  .auth-toggle-btn {
+    padding: 14px;
+    text-align: center;
+    font-size: 13px; font-weight: 500;
+    cursor: pointer;
+    color: var(--ink-4);
+    background: var(--subtle);
+    border: none;
+    transition: all 0.15s;
+  }
+  .auth-toggle-btn.active {
+    background: var(--white);
+    color: var(--ink);
+  }
+
+  /* ── Form ── */
+  .auth-form { padding: 28px 28px 24px; display: none; }
+  .auth-form.active { display: block; }
+
+  .form-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px; letter-spacing: -0.3px;
+    margin-bottom: 4px;
+  }
+  .form-subtitle {
+    font-size: 12.5px; color: var(--ink-4);
+    margin-bottom: 24px;
+  }
+
+  /* ── User type selector ── */
+  .user-type-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .user-type-card {
+    border: 1.5px solid var(--rule);
+    border-radius: var(--r);
+    padding: 14px 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    background: var(--white);
+  }
+  .user-type-card:hover { border-color: var(--ink-3); background: var(--subtle); }
+  .user-type-card.selected {
+    border-color: var(--ink);
+    background: var(--subtle);
+    box-shadow: 0 0 0 3px rgba(26,25,23,0.06);
+  }
+  .user-type-icon { font-size: 22px; margin-bottom: 6px; }
+  .user-type-label { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+  .user-type-desc  { font-size: 11px; color: var(--ink-4); margin-top: 2px; line-height: 1.4; }
+
+  /* ── Inputs ── */
+  .form-group { margin-bottom: 14px; }
+  .form-label {
+    display: block;
+    font-size: 11.5px; font-weight: 500;
+    color: var(--ink-3); margin-bottom: 5px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .form-control {
+    width: 100%; padding: 9px 12px;
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    background: var(--white);
+    font-size: 13.5px; color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .form-control:focus {
+    border-color: var(--ink-3);
+    box-shadow: 0 0 0 3px rgba(26,25,23,0.06);
+  }
+  .form-control::placeholder { color: var(--ink-5); }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* ── Submit btn ── */
+  .btn-submit {
+    width: 100%;
+    padding: 11px;
+    background: var(--ink);
+    color: var(--white);
+    border: none;
+    border-radius: var(--r);
+    font-size: 13.5px; font-weight: 500;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background 0.12s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-submit:hover { background: var(--ink-2); }
+  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* ── Divider ── */
+  .or-divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 18px 0;
+    font-size: 11.5px; color: var(--ink-4);
+  }
+  .or-divider::before, .or-divider::after {
+    content: ''; flex: 1;
+    height: 1px; background: var(--rule);
+  }
+
+  /* ── Alert ── */
+  .auth-alert {
+    display: none;
+    padding: 10px 13px;
+    border-radius: var(--r);
+    font-size: 12.5px;
+    margin-bottom: 16px;
+    align-items: center; gap: 8px;
+  }
+  .auth-alert.show { display: flex; }
+  .auth-alert.error   { background: #fdf1f0; border: 1px solid rgba(192,57,43,0.2); color: var(--accent); }
+  .auth-alert.success { background: var(--green-s); border: 1px solid rgba(21,128,61,0.2); color: var(--green); }
+  .auth-alert.info    { background: var(--amber-s); border: 1px solid rgba(180,83,9,0.2); color: var(--amber); }
+
+  /* ── Footer ── */
+  .auth-footer {
+    padding: 14px 28px;
+    border-top: 1px solid var(--rule);
+    text-align: center;
+    font-size: 12px; color: var(--ink-4);
+  }
+  .auth-footer a {
+    color: var(--ink); font-weight: 500;
+    cursor: pointer; text-decoration: underline;
+  }
+
+  /* ── Influencer extra fields ── */
+  .influencer-fields { display: none; }
+  .influencer-fields.show { display: block; }
+
+  .section-divider {
+    font-size: 10.5px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-4);
+    margin: 18px 0 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--rule);
+  }
+</style>
+</head>
+<body>
+
+<div class="auth-wrap">
+
+  <!-- Brand -->
+  <div class="brand">
+    <div class="brand-mark">KK</div>
+    <span class="brand-name">KOLoKOI</span>
+    <span class="brand-sub">Influencer Intelligence</span>
+  </div>
+
+  <!-- Card -->
+  <div class="auth-card">
+
+    <!-- Toggle -->
+    <div class="auth-toggle">
+      <button class="auth-toggle-btn active" onclick="switchTab('login')">Sign In</button>
+      <button class="auth-toggle-btn" onclick="switchTab('register')">Create Account</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div class="auth-form active" id="form-login">
+      <div class="form-title">Welcome back</div>
+      <div class="form-subtitle">Sign in to your KOLoKOI account</div>
+
+      <div class="auth-alert" id="loginAlert"></div>
+
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control" id="loginEmail" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-control" id="loginPassword" placeholder="••••••••">
+      </div>
+
+      <button class="btn-submit" id="loginBtn" onclick="handleLogin()">
+        Sign In
+      </button>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div class="auth-form" id="form-register">
+      <div class="form-title">Create account</div>
+      <div class="form-subtitle">Join KOLoKOI as a Company or Influencer</div>
+
+      <div class="auth-alert" id="registerAlert"></div>
+
+      <!-- User type selection -->
+      <div class="user-type-row">
+        <div class="user-type-card selected" id="type-company" onclick="selectType('company')">
+          <div class="user-type-icon">🏢</div>
+          <div class="user-type-label">Company</div>
+          <div class="user-type-desc">Create campaigns &amp; manage influencers</div>
+        </div>
+        <div class="user-type-card" id="type-influencer" onclick="selectType('influencer')">
+          <div class="user-type-icon">⭐</div>
+          <div class="user-type-label">Influencer</div>
+          <div class="user-type-desc">Apply to campaigns &amp; get paid</div>
+        </div>
+      </div>
+
+      <!-- Basic info -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input type="text" class="form-control" id="regFirstName" placeholder="First name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input type="text" class="form-control" id="regLastName" placeholder="Last name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control" id="regEmail" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-control" id="regPassword" placeholder="Min. 8 characters">
+      </div>
+
+      <!-- Company fields -->
+      <div id="companyFields">
+        <div class="section-divider">Company Info</div>
+        <div class="form-group">
+          <label class="form-label">Company / Brand Name</label>
+          <input type="text" class="form-control" id="regCompany" placeholder="Your company or brand name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Industry</label>
+          <select class="form-control" id="regIndustry">
+            <option value="">Select industry</option>
+            <option>Beauty &amp; Cosmetics</option>
+            <option>Fashion &amp; Apparel</option>
+            <option>Food &amp; Beverage</option>
+            <option>Technology</option>
+            <option>Health &amp; Wellness</option>
+            <option>Lifestyle</option>
+            <option>Travel</option>
+            <option>Finance</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Influencer fields -->
+      <div id="influencerFields" class="influencer-fields">
+        <div class="section-divider">Social Accounts</div>
+        <div class="form-group">
+          <label class="form-label">Instagram Handle</label>
+          <input type="text" class="form-control" id="regInstagram" placeholder="@username">
+        </div>
+        <div class="form-group">
+          <label class="form-label">TikTok Handle</label>
+          <input type="text" class="form-control" id="regTiktok" placeholder="@username">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Primary Platform</label>
+            <select class="form-control" id="regPlatform">
+              <option value="">Select platform</option>
+              <option>Instagram</option>
+              <option>TikTok</option>
+              <option>Facebook</option>
+              <option>YouTube</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Niche / Category</label>
+            <input type="text" class="form-control" id="regNiche" placeholder="Beauty, Tech…">
+          </div>
+        </div>
+        <div class="section-divider">Pricing</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Rate per Post (₱)</label>
+            <input type="number" class="form-control" id="regRate" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Payment Method</label>
+            <select class="form-control" id="regPayment">
+              <option value="">Select method</option>
+              <option>GCash</option>
+              <option>BDO / BPI</option>
+              <option>PayPal</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-submit" id="registerBtn" onclick="handleRegister()">
+        Create Account
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <div class="auth-footer" id="authFooter">
+      Don't have an account? <a onclick="switchTab('register')">Create one</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const BACKEND = 'http://localhost:3000';
+let selectedType = 'company';
+
+// ── Tab switching ────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.auth-toggle-btn').forEach((b,i) => {
+    b.classList.toggle('active', (tab === 'login' ? i === 0 : i === 1));
+  });
+  document.getElementById('form-login').classList.toggle('active', tab === 'login');
+  document.getElementById('form-register').classList.toggle('active', tab === 'register');
+
+  const footer = document.getElementById('authFooter');
+  footer.innerHTML = tab === 'login'
+    ? `Don't have an account? <a onclick="switchTab('register')">Create one</a>`
+    : `Already have an account? <a onclick="switchTab('login')">Sign in</a>`;
+
+  clearAlerts();
+}
+
+// ── User type selection ──────────────────────────────────────
+function selectType(type) {
+  selectedType = type;
+  document.getElementById('type-company').classList.toggle('selected', type === 'company');
+  document.getElementById('type-influencer').classList.toggle('selected', type === 'influencer');
+  document.getElementById('companyFields').style.display    = type === 'company'    ? 'block' : 'none';
+  document.getElementById('influencerFields').style.display = type === 'influencer' ? 'block' : 'none';
+  if (type === 'influencer') document.getElementById('influencerFields').classList.add('show');
+}
+
+// ── Alerts ───────────────────────────────────────────────────
+function showAlert(id, msg, type = 'error') {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = `auth-alert show ${type}`;
+}
+function clearAlerts() {
+  ['loginAlert','registerAlert'].forEach(id => {
+    const el = document.getElementById(id);
+    el.className = 'auth-alert';
+    el.textContent = '';
+  });
+}
+
+// ── LOGIN ────────────────────────────────────────────────────
+async function handleLogin() {
+  const email    = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const btn      = document.getElementById('loginBtn');
+
+  if (!email || !password) { showAlert('loginAlert', 'Please enter your email and password.'); return; }
+
+  btn.disabled = true; btn.textContent = 'Signing in…';
+
+  try {
+    const res  = await fetch(`${BACKEND}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+
+    if (!res.ok || data.error) {
+      showAlert('loginAlert', data.error || 'Invalid email or password.');
+      btn.disabled = false; btn.textContent = 'Sign In';
+      return;
+    }
+
+    // Save session
+    localStorage.setItem('kk_user', JSON.stringify(data.user));
+    localStorage.setItem('kk_token', data.token);
+
+    // Redirect based on role
+    window.location.href = data.user.role === 'influencer' ? 'influencer.html' : 'index.html';
+
+  } catch (e) {
+    showAlert('loginAlert', 'Cannot reach server. Make sure node server.js is running.');
+    btn.disabled = false; btn.textContent = 'Sign In';
+  }
+}
+
+// ── REGISTER ─────────────────────────────────────────────────
+async function handleRegister() {
+  const firstName = document.getElementById('regFirstName').value.trim();
+  const lastName  = document.getElementById('regLastName').value.trim();
+  const email     = document.getElementById('regEmail').value.trim();
+  const password  = document.getElementById('regPassword').value;
+  const btn       = document.getElementById('registerBtn');
+
+  if (!firstName || !lastName) { showAlert('registerAlert', 'Please enter your full name.'); return; }
+  if (!email)    { showAlert('registerAlert', 'Please enter your email.'); return; }
+  if (password.length < 8) { showAlert('registerAlert', 'Password must be at least 8 characters.'); return; }
+
+  const payload = {
+    first_name: firstName,
+    last_name:  lastName,
+    email, password,
+    role: selectedType,
+  };
+
+  if (selectedType === 'company') {
+    payload.company_name = document.getElementById('regCompany').value.trim();
+    payload.industry     = document.getElementById('regIndustry').value;
+  } else {
+    payload.ig_username     = document.getElementById('regInstagram').value.replace('@','').trim();
+    payload.tiktok_handle   = document.getElementById('regTiktok').value.replace('@','').trim();
+    payload.primary_platform= document.getElementById('regPlatform').value;
+    payload.niche           = document.getElementById('regNiche').value.trim();
+    payload.rate_per_post   = document.getElementById('regRate').value || 0;
+    payload.payment_method  = document.getElementById('regPayment').value;
+  }
+
+  btn.disabled = true; btn.textContent = 'Creating account…';
+
+  try {
+    const res  = await fetch(`${BACKEND}/api/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+
+    if (!res.ok || data.error) {
+      showAlert('registerAlert', data.error || 'Registration failed. Please try again.');
+      btn.disabled = false; btn.textContent = 'Create Account';
+      return;
+    }
+
+    showAlert('registerAlert', '✓ Account created! Redirecting…', 'success');
+
+    setTimeout(() => {
+      localStorage.setItem('kk_user', JSON.stringify(data.user));
+      localStorage.setItem('kk_token', data.token);
+      window.location.href = data.user.role === 'influencer' ? 'influencer.html' : 'index.html';
+    }, 1200);
+
+  } catch (e) {
+    showAlert('registerAlert', 'Cannot reach server. Make sure node server.js is running.');
+    btn.disabled = false; btn.textContent = 'Create Account';
+  }
+}
+
+// ── Enter key support ────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  if (document.getElementById('form-login').classList.contains('active')) handleLogin();
+  else handleRegister();
+});
+
+// ── If already logged in, redirect ──────────────────────────
+const existing = localStorage.getItem('kk_user');
+if (existing) {
+  try {
+    const u = JSON.parse(existing);
+    window.location.href = u.role === 'influencer' ? 'influencer.html' : 'index.html';
+  } catch {}
+}
+</script>
+</body>
+</html>

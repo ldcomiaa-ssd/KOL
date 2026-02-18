@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KOLoKOI — Influencer Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ═══════════════ SIDEBAR ═══════════════ -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-mark">KK</div>
+      <div>
+        <div class="logo-text">KOLoKOI</div>
+        <div class="logo-sub">Intelligence</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-section">Overview</div>
+      <div class="nav-item active" onclick="showScreen('dashboard',this)">
+        <span class="icon">◎</span> Dashboard
+      </div>
+
+      <div class="nav-section">Campaign</div>
+      <div class="nav-item" onclick="showScreen('campaigns',this)">
+        <span class="icon">◈</span> Campaigns
+      </div>
+      <div class="nav-item" onclick="showScreen('deliverables',this)">
+        <span class="icon">✓</span> Deliverables
+      </div>
+      <div class="nav-item" onclick="showScreen('compliance',this)">
+        <span class="icon">⚑</span> Compliance
+      </div>
+      <div class="nav-item" onclick="showScreen('marketplace',this)">
+        <span class="icon">◻</span> Marketplace
+      </div>
+
+      <div class="nav-section">Influencers</div>
+      <div class="nav-item" onclick="showScreen('influencers',this)">
+        <span class="icon">◯</span> Database
+      </div>
+      <div class="nav-item" onclick="showScreen('trust',this)">
+        <span class="icon">◇</span> Trust Scoring
+      </div>
+      <div class="nav-item" onclick="showScreen('network',this)">
+        <span class="icon">⬡</span> Network Analysis
+      </div>
+
+      <div class="nav-section">Finance</div>
+      <div class="nav-item" onclick="showScreen('payments',this)">
+        <span class="icon">₱</span> Payments
+      </div>
+      <div class="nav-item" onclick="showScreen('contracts',this)">
+        <span class="icon">◫</span> Contracts
+      </div>
+
+      <div class="nav-section">Intelligence</div>
+      <div class="nav-item" onclick="showScreen('sentiment',this)">
+        <span class="icon">◑</span> Sentiment
+      </div>
+      <div class="nav-item" onclick="showScreen('reports',this)">
+        <span class="icon">▦</span> Reports
+      </div>
+
+      <div class="nav-section">System</div>
+      <div class="nav-item" onclick="showScreen('integrations',this)">
+        <span class="icon">⊕</span> API Integrations
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="avatar" id="sidebarAvatar">—</div>
+      <div style="flex:1">
+        <div class="user-name" id="sidebarName">—</div>
+        <div class="user-role" id="sidebarRole">—</div>
+      </div>
+      <button onclick="logout()" title="Sign out" style="background:none;border:none;cursor:pointer;color:var(--ink-4);font-size:15px;padding:4px;line-height:1">⏏</button>
+    </div>
+  </aside>
+
+  <!-- ═══════════════ MAIN ═══════════════ -->
+  <main class="main">
+    <header class="topbar">
+      <div class="page-title" id="pageTitle">Dashboard</div>
+      <div class="topbar-actions">
+        <div class="search-bar">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--ink-4);flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search campaigns, influencers…">
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="openModal('alertsModal')">
+          Alerts &nbsp;<span class="badge badge-ink" id="alertBadge" style="vertical-align:middle">0</span>
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="openModal('newCampaignModal')">+ New Campaign</button>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ─── DASHBOARD ─── -->
+      <div class="screen active" id="screen-dashboard">
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Active Campaigns</div>
+            <div class="stat-value" id="statActiveCampaigns">0</div>
+            <div class="stat-change">from your campaigns</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Active Influencers</div>
+            <div class="stat-value" id="statActiveInfluencers">0</div>
+            <div class="stat-change">from your database</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Compliance Rate</div>
+            <div class="stat-value" id="statCompliance">—</div>
+            <div class="stat-change">across all campaigns</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Escrow Balance</div>
+            <div class="stat-value" id="statEscrow">—</div>
+            <div class="stat-change">pending release</div>
+          </div>
+        </div>
+
+        <div class="grid-6040">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Campaign Command Center</div>
+                <div class="card-subtitle">Real-time status across all active campaigns</div>
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="showScreen('campaigns',document.querySelectorAll('.nav-item')[2])">View all →</button>
+            </div>
+            <div id="dashCampaigns">
+              <div class="empty-state">
+                <div class="empty-icon">◈</div>
+                <div class="empty-title">No campaigns yet</div>
+                <div class="empty-desc">Create your first campaign to track progress here</div>
+                <button class="btn btn-primary btn-sm" onclick="openModal('newCampaignModal')" style="margin-top:12px">+ New Campaign</button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">Health Alerts</div></div>
+              <div class="card-body" id="dashAlerts">
+                <div class="empty-state" style="padding:16px 0">
+                  <div class="empty-desc">No alerts — add campaigns and influencers to monitor</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Top Influencers</div>
+              <button class="btn btn-ghost btn-sm" onclick="showScreen('trust',document.querySelectorAll('.nav-item')[8])">Full rankings →</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Influencer</th><th>Platform</th><th>Eng. Rate</th><th>Trust</th></tr></thead>
+                <tbody id="dashTopInfluencers">
+                  <tr><td colspan="4" style="color:var(--ink-4);font-size:12px;text-align:center;padding:24px">No influencers added yet</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Recent API Activity</div>
+              <span class="badge badge-ink" id="apiLiveBadge"><span class="dot" style="margin-right:4px"></span>Waiting</span>
+            </div>
+            <div class="card-body">
+              <div id="dashSyncActivity" style="color:var(--ink-4);font-size:12px;text-align:center;padding:16px">
+                Connect Meta API to see live sync activity
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── CAMPAIGNS ─── -->
+      <div class="screen" id="screen-campaigns">
+        <div class="flex-between mb-16">
+          <div class="tabs" style="margin-bottom:0">
+            <div class="tab active">Active (0)</div>
+            <div class="tab">Draft (0)</div>
+            <div class="tab">Completed (0)</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('newCampaignModal')">+ New Campaign</button>
+        </div>
+        <div class="card">
+          <div class="empty-state" style="padding:48px 24px">
+            <div class="empty-icon">◈</div>
+            <div class="empty-title">No campaigns yet</div>
+            <div class="empty-desc">Create your first campaign to start tracking influencers, posts, and performance</div>
+            <button class="btn btn-primary btn-sm" onclick="openModal('newCampaignModal')" style="margin-top:16px">+ Create Campaign</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── DELIVERABLES ─── -->
+      <div class="screen" id="screen-deliverables">
+        <div class="flex-between mb-16">
+          <div class="tabs" style="margin-bottom:0">
+            <div class="tab active">Pending Review (0)</div>
+            <div class="tab">Approved (0)</div>
+            <div class="tab">Rejected (0)</div>
+          </div>
+          <button class="btn btn-outline btn-sm">Export CSV</button>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Influencer</th><th>Campaign</th><th>Platform</th><th>Type</th><th>Submitted</th><th>Captions</th><th>Hashtags</th><th>Eng. Rate</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td colspan="9">
+                  <div class="empty-state" style="padding:40px 24px">
+                    <div class="empty-icon">✓</div>
+                    <div class="empty-title">No deliverables yet</div>
+                    <div class="empty-desc">Deliverables will appear here once influencers submit posts for your campaigns</div>
+                  </div>
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── COMPLIANCE ─── -->
+      <div class="screen" id="screen-compliance">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">Hashtag Violations</div><div class="stat-value accent">—</div></div>
+          <div class="stat-card"><div class="stat-label">Missing Talking Points</div><div class="stat-value amber">—</div></div>
+          <div class="stat-card"><div class="stat-label">Deleted Posts</div><div class="stat-value accent">—</div></div>
+          <div class="stat-card"><div class="stat-label">Compliance Rate</div><div class="stat-value green">—</div></div>
+        </div>
+        <div class="grid-6040">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Compliance Tracker</div>
+              <div class="flex-center">
+                <button class="btn btn-outline btn-sm">Export</button>
+                <select class="form-control btn-sm" style="width:auto"><option>All Campaigns</option></select>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Influencer</th><th>Campaign</th><th>Hashtags</th><th>Talking Points</th><th>Brand Tag</th><th>Post Count</th><th>Deadline</th><th>Penalty</th></tr></thead>
+                <tbody>
+                  <tr><td colspan="8">
+                    <div class="empty-state" style="padding:40px 24px">
+                      <div class="empty-icon">⚑</div>
+                      <div class="empty-title">No compliance data yet</div>
+                      <div class="empty-desc">Compliance is tracked automatically once campaigns have active influencers</div>
+                    </div>
+                  </td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">Penalty Register</div></div>
+              <div class="card-body">
+                <div class="empty-state" style="padding:24px 0">
+                  <div class="empty-desc">No penalties recorded</div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">Post Deletion Tracking</div></div>
+              <div class="card-body">
+                <div class="empty-state" style="padding:24px 0">
+                  <div class="empty-desc">No deletions detected</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── INFLUENCERS ─── -->
+      <div class="screen" id="screen-influencers">
+        <div class="flex-between mb-16">
+          <div class="tabs" style="margin-bottom:0">
+            <div class="tab active">All (0)</div>
+            <div class="tab">Meta (0)</div>
+            <div class="tab">TikTok (0)</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('addInfluencerModal')">+ Add Influencer</button>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Influencer</th><th>Handles</th><th>Followers</th><th>Avg Eng.</th><th>Campaigns</th><th>Trust</th><th>Status</th><th></th></tr></thead>
+              <tbody id="influencerTableBody">
+                <tr><td colspan="8">
+                  <div class="empty-state" style="padding:48px 24px">
+                    <div class="empty-icon">◯</div>
+                    <div class="empty-title">No influencers yet</div>
+                    <div class="empty-desc">Add your first influencer to start building your database</div>
+                    <button class="btn btn-primary btn-sm" onclick="openModal('addInfluencerModal')" style="margin-top:16px">+ Add Influencer</button>
+                  </div>
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── TRUST SCORING ─── -->
+      <div class="screen" id="screen-trust">
+        <div class="grid-6040">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Reliability Leaderboard</div>
+              <select class="form-control btn-sm" style="width:auto"><option>All time</option><option>Last 90 days</option></select>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>#</th><th>Influencer</th><th>Deadline</th><th>Response</th><th>Perf.</th><th>Guideline</th><th>Del. Rate</th><th>Score</th></tr></thead>
+                <tbody>
+                  <tr><td colspan="8">
+                    <div class="empty-state" style="padding:40px 24px">
+                      <div class="empty-icon">◇</div>
+                      <div class="empty-title">No scores yet</div>
+                      <div class="empty-desc">Trust scores are calculated automatically as influencers complete campaigns</div>
+                    </div>
+                  </td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div><div class="card-title">Score Breakdown</div><div class="card-subtitle">Select an influencer to view</div></div></div>
+            <div class="card-body">
+              <div class="empty-state" style="padding:32px 0">
+                <div class="empty-desc">No influencer selected</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── NETWORK ─── -->
+      <div class="screen" id="screen-network">
+        <div class="grid-6040">
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">Influencer Network Map</div><div class="card-subtitle">Connection strength and coordination patterns</div></div>
+              <button class="btn btn-outline btn-sm">Refresh</button>
+            </div>
+            <div class="card-body">
+              <div class="network-area" id="networkCanvas"></div>
+              <div class="network-legend mt-16">
+                <div class="leg-item"><div class="leg-dot" style="background:var(--accent)"></div>High coordination risk</div>
+                <div class="leg-item"><div class="leg-dot" style="background:var(--amber)"></div>Moderate connection</div>
+                <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>Normal interaction</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">Coordination Flags</div></div>
+              <div class="card-body">
+                <div class="empty-state" style="padding:24px 0">
+                  <div class="empty-desc">No coordination flags detected</div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">Relationship Intelligence</div></div>
+              <div class="card-body">
+                <div class="empty-state" style="padding:24px 0">
+                  <div class="empty-desc">Add influencers to see relationship data</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── PAYMENTS ─── -->
+      <div class="screen" id="screen-payments">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">Escrow Balance</div><div class="stat-value green">—</div></div>
+          <div class="stat-card"><div class="stat-label">Pending Release</div><div class="stat-value amber">—</div></div>
+          <div class="stat-card"><div class="stat-label">Released This Month</div><div class="stat-value blue">—</div></div>
+          <div class="stat-card"><div class="stat-label">Disputed</div><div class="stat-value accent">—</div></div>
+        </div>
+        <div class="grid-6040">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Payment Queue</div>
+              <button class="btn btn-primary btn-sm">Process All</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Influencer</th><th>Campaign</th><th>Amount</th><th>Trigger</th><th>Status</th><th>Method</th><th></th></tr></thead>
+                <tbody>
+                  <tr><td colspan="7">
+                    <div class="empty-state" style="padding:40px 24px">
+                      <div class="empty-icon">₱</div>
+                      <div class="empty-title">No payments queued</div>
+                      <div class="empty-desc">Payments appear here once campaigns have approved deliverables</div>
+                    </div>
+                  </td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">Payment Settings</div></div>
+              <div class="card-body">
+                <div class="form-group">
+                  <div class="form-label">Default Release Trigger</div>
+                  <select class="form-control">
+                    <option>Auto-release on approval</option>
+                    <option>Manual approval required</option>
+                    <option>Milestone-based (partial)</option>
+                  </select>
+                </div>
+                <div class="divider-soft"></div>
+                <div class="section-label">Connected Methods</div>
+                <div class="api-row"><div class="api-platform">📱</div><div><div class="api-name">GCash</div><div class="api-detail">Business API</div></div><span class="api-disc">Not connected</span></div>
+                <div class="api-row"><div class="api-platform">🏦</div><div><div class="api-name">BDO / BPI</div><div class="api-detail">InstaPay / PESONet</div></div><span class="api-disc">Not connected</span></div>
+                <div class="api-row"><div class="api-platform">🌐</div><div><div class="api-name">PayPal</div><div class="api-detail">International</div></div><span class="api-disc">Not connected</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── MARKETPLACE ─── -->
+      <div class="screen" id="screen-marketplace">
+        <div class="flex-between mb-16">
+          <div>
+            <div class="card-title-lg">Campaign Marketplace</div>
+            <div style="font-size:12px;color:var(--ink-4);margin-top:3px">Open campaigns · Influencer applications · Smart matching</div>
+          </div>
+          <div class="flex-center">
+            <button class="btn btn-outline btn-sm">Smart Match</button>
+            <button class="btn btn-primary btn-sm" onclick="openModal('newCampaignModal')">Post Campaign</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="empty-state" style="padding:64px 24px">
+            <div class="empty-icon">◻</div>
+            <div class="empty-title">Marketplace is empty</div>
+            <div class="empty-desc">Post a campaign to the marketplace so influencers can discover and apply</div>
+            <button class="btn btn-primary btn-sm" onclick="openModal('newCampaignModal')" style="margin-top:16px">Post a Campaign</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── SENTIMENT ─── -->
+      <div class="screen" id="screen-sentiment">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">Positive Sentiment</div><div class="stat-value green">—</div></div>
+          <div class="stat-card"><div class="stat-label">Neutral</div><div class="stat-value">—</div></div>
+          <div class="stat-card"><div class="stat-label">Negative / Backlash</div><div class="stat-value accent">—</div></div>
+          <div class="stat-card"><div class="stat-label">Comments Analyzed</div><div class="stat-value blue">0</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Sentiment by Campaign</div></div>
+            <div class="card-body">
+              <div class="empty-state" style="padding:32px 0">
+                <div class="empty-icon">◑</div>
+                <div class="empty-title">No sentiment data</div>
+                <div class="empty-desc">Sentiment analysis will populate once campaigns have live posts</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">Backlash Flags</div></div>
+              <div class="card-body">
+                <div class="empty-state" style="padding:24px 0">
+                  <div class="empty-desc">No backlash flags detected</div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">Top Negative Keywords</div></div>
+              <div class="card-body">
+                <div class="empty-state" style="padding:24px 0">
+                  <div class="empty-desc">No keywords to show yet</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── REPORTS ─── -->
+      <div class="screen" id="screen-reports">
+        <div class="flex-between mb-16">
+          <div class="card-title-lg">Performance Reports</div>
+          <div class="flex-center">
+            <select class="form-control btn-sm" style="width:auto"><option>All Campaigns</option></select>
+            <button class="btn btn-primary btn-sm">Export PDF</button>
+            <button class="btn btn-outline btn-sm">Export CSV</button>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">Total Reach</div><div class="stat-value">—</div></div>
+          <div class="stat-card"><div class="stat-label">Total Engagements</div><div class="stat-value blue">—</div></div>
+          <div class="stat-card"><div class="stat-label">Avg. Eng. Rate</div><div class="stat-value green">—</div></div>
+          <div class="stat-card"><div class="stat-label">Posts Tracked</div><div class="stat-value">0</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Influencer Performance</div></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Influencer</th><th>Posts</th><th>Reach</th><th>Likes</th><th>Comments</th><th>Views</th><th>Eng.</th><th>ROI</th></tr></thead>
+                <tbody>
+                  <tr><td colspan="8">
+                    <div class="empty-state" style="padding:32px 24px">
+                      <div class="empty-desc">No performance data yet</div>
+                    </div>
+                  </td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Platform Breakdown</div></div>
+            <div class="card-body">
+              <div class="empty-state" style="padding:32px 0">
+                <div class="empty-desc">No platform data yet</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── CONTRACTS ─── -->
+      <div class="screen" id="screen-contracts">
+        <div class="flex-between mb-16">
+          <div class="card-title-lg">Contracts &amp; Negotiation</div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('newContractModal')">+ Generate Contract</button>
+        </div>
+        <div class="grid-6040">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Active Contracts</div></div>
+            <div class="empty-state" style="padding:48px 24px">
+              <div class="empty-icon">◫</div>
+              <div class="empty-title">No contracts yet</div>
+              <div class="empty-desc">Generate a contract once you have a campaign and influencer ready</div>
+              <button class="btn btn-primary btn-sm" onclick="openModal('newContractModal')" style="margin-top:16px">+ Generate Contract</button>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-header"><div><div class="card-title">Negotiation Thread</div><div class="card-subtitle">No active negotiation</div></div></div>
+              <div class="card-body">
+                <div class="empty-state" style="padding:24px 0">
+                  <div class="empty-desc">Select a contract to view the negotiation thread</div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">Rate Cards</div></div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Influencer</th><th>TikTok</th><th>IG Story</th><th>Reel</th></tr></thead>
+                  <tbody>
+                    <tr><td colspan="4" style="color:var(--ink-4);font-size:12px;text-align:center;padding:20px">No rate cards yet</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── INTEGRATIONS ─── -->
+      <div class="screen" id="screen-integrations">
+
+        <div class="grid-2" style="margin-bottom:16px">
+          <!-- Meta Card -->
+          <div class="card" style="border-color:rgba(59,130,246,0.25)">
+            <div class="card-header">
+              <div>
+                <div class="card-title" style="display:flex;align-items:center;gap:8px">
+                  <span style="font-size:16px">𝗙</span> Meta / Facebook Graph API
+                </div>
+                <div class="card-subtitle">Graph API v19.0 · Facebook &amp; Instagram</div>
+              </div>
+              <span id="metaBadge" class="badge badge-ink">Not Connected</span>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <div class="form-label">Access Token (User / Page)</div>
+                <input id="metaToken" type="text" class="form-control" placeholder="Paste your Graph API access token…">
+                <div style="font-size:11px;color:var(--ink-4);margin-top:5px">Get one free from <strong>developers.facebook.com → Graph API Explorer</strong></div>
+              </div>
+              <div class="flex-center" style="gap:8px">
+                <button class="btn btn-primary btn-sm" onclick="connectMeta()">Connect</button>
+                <button class="btn btn-outline btn-sm" onclick="testMeta()">Test &amp; Verify</button>
+              </div>
+              <div id="metaProfileResult"></div>
+            </div>
+          </div>
+
+          <!-- TikTok Card — Sandbox Live -->
+          <div class="card" id="tiktokIntCard" style="position:relative;overflow:hidden;border-color:rgba(254,44,85,0.2)">
+            <div class="card-header">
+              <div>
+                <div class="card-title" style="display:flex;align-items:center;gap:8px">
+                  <span style="font-size:15px">♪</span> TikTok Login Kit
+                </div>
+                <div class="card-subtitle">OAuth 2.0 · Sandbox Mode</div>
+              </div>
+              <span id="tiktokBadge" class="badge badge-ink">Not Connected</span>
+            </div>
+            <div class="card-body">
+              <!-- Profile shown after connect -->
+              <div id="tiktokProfileResult" style="display:none;align-items:center;gap:12px;padding:12px;background:var(--surface-2);border-radius:var(--r);margin-bottom:16px">
+                <div class="inf-av" id="tiktokAvatar" style="width:40px;height:40px;font-size:14px">TT</div>
+                <div style="flex:1">
+                  <div style="font-weight:600;font-size:13.5px" id="tiktokUserName">—</div>
+                  <div style="font-size:11.5px;color:var(--ink-4)" id="tiktokUserHandle">—</div>
+                </div>
+                <span class="badge badge-green"><span class="dot live" style="margin-right:4px"></span>Live</span>
+              </div>
+
+              <div class="alert alert-amber" id="tiktokSandboxNote" style="margin-bottom:12px">
+                <span class="alert-icon">🧪</span>
+                <div>
+                  <div class="alert-title">Sandbox Mode Active</div>
+                  <div class="alert-desc">Uses TikTok Login Kit. Only sandbox test users can authenticate. Scope: <strong>user.info.basic</strong></div>
+                </div>
+              </div>
+
+              <div class="flex-center" style="gap:8px">
+                <button class="btn btn-primary btn-sm" id="tiktokConnectBtn" onclick="connectTikTok()" style="background:#fe2c55;border-color:#fe2c55">
+                  Connect TikTok
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="testTikTokStatus()">Check Status</button>
+                <button class="btn btn-ghost btn-sm" id="tiktokDisconnectBtn" onclick="disconnectTikTok()" style="display:none">Disconnect</button>
+              </div>
+              <div id="tiktokStatusResult" style="margin-top:10px"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Meta Connected Data — shown after connect -->
+        <div id="metaDataSection" style="display:none">
+          <div class="card" style="border-color:rgba(59,130,246,0.25);margin-bottom:16px">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Connected Meta Account</div>
+                <div class="card-subtitle" id="metaAccountSubtitle">—</div>
+              </div>
+              <div class="flex-center" style="gap:8px">
+                <button class="btn btn-outline btn-sm" onclick="fetchMetaPages()">Refresh Pages</button>
+                <button class="btn btn-ghost btn-sm" onclick="disconnectMeta()">Disconnect</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="metaUserProfile" style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface-2);border-radius:var(--r);margin-bottom:16px">
+                <div class="inf-av" id="metaUserAvatar" style="width:40px;height:40px;font-size:14px">--</div>
+                <div style="flex:1">
+                  <div style="font-weight:600;font-size:13.5px" id="metaUserName">—</div>
+                  <div style="font-size:11.5px;color:var(--ink-4)" id="metaUserId">Facebook ID: —</div>
+                </div>
+                <span class="badge badge-green"><span class="dot live" style="margin-right:4px"></span>Live</span>
+              </div>
+              <div class="section-label" style="margin-bottom:8px">Your Facebook Pages</div>
+              <div id="metaPagesGrid" style="display:grid;gap:8px">
+                <div style="color:var(--ink-4);font-size:12px;text-align:center;padding:16px">Click "Refresh Pages" to load your pages</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sync Settings -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header"><div class="card-title">Sync Settings</div></div>
+          <div class="card-body">
+            <div class="form-row mb-16">
+              <div class="form-group" style="margin-bottom:0">
+                <div class="form-label">Auto-sync frequency</div>
+                <select id="syncFreq" class="form-control">
+                  <option value="15">Every 15 minutes</option>
+                  <option value="30" selected>Every 30 minutes</option>
+                  <option value="60">Every hour</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <div class="form-label">Webhook URL <span style="color:var(--ink-4);font-weight:400">(optional)</span></div>
+                <input id="webhookUrl" type="text" class="form-control" placeholder="https://your-server.com/webhook">
+              </div>
+            </div>
+            <div class="flex-center" style="gap:8px">
+              <button class="btn btn-primary btn-sm" onclick="saveSync()">Save Settings</button>
+              <button class="btn btn-outline btn-sm" onclick="runSync()">Run Manual Sync</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Connection Log</div>
+            <span class="badge badge-ink" style="font-size:10px" id="logCount">0 events</span>
+          </div>
+          <div class="card-body" id="syncLog">
+            <div style="color:var(--ink-4);font-size:12px;text-align:center;padding:20px">No activity yet — connect Meta to see events here</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div><!-- /app -->
+
+<!-- ═══════════ MODALS ═══════════ -->
+
+<!-- New Campaign -->
+<div class="modal-overlay" id="newCampaignModal">
+  <div class="modal modal-lg">
+    <div class="modal-header"><h2 class="modal-title">Create New Campaign</h2><button class="modal-close" onclick="closeModal('newCampaignModal')">×</button></div>
+    <div class="modal-body">
+      <div class="tabs"><div class="tab active">Details</div><div class="tab">Influencers</div><div class="tab">Brief &amp; Media</div><div class="tab">Payment</div></div>
+      <div class="form-row"><div class="form-group"><div class="form-label">Campaign Name</div><input type="text" class="form-control" placeholder="e.g., Summer Launch 2026"></div><div class="form-group"><div class="form-label">Brand / Client</div><input type="text" class="form-control" placeholder="Brand name"></div></div>
+      <div class="form-row"><div class="form-group"><div class="form-label">Start Date</div><input type="date" class="form-control"></div><div class="form-group"><div class="form-label">End Date</div><input type="date" class="form-control"></div></div>
+      <div class="form-row"><div class="form-group"><div class="form-label">Total Budget (₱)</div><input type="number" class="form-control" placeholder="0"></div><div class="form-group"><div class="form-label">Platform</div><select class="form-control"><option>Meta (FB + IG)</option><option>TikTok</option><option>Both</option><option>YouTube</option></select></div></div>
+      <div class="form-group"><div class="form-label">Required Hashtags</div><input type="text" class="form-control" placeholder="#brand #campaign (comma separated)"></div>
+      <div class="form-group"><div class="form-label">Required Caption / Key Messages</div><textarea class="form-control" placeholder="Key messages influencers must include…"></textarea></div>
+      <div class="form-group"><div class="form-label">Talking Points</div><textarea class="form-control" placeholder="Product features to highlight, dos and don'ts…"></textarea></div>
+      <div class="form-row"><div class="form-group"><div class="form-label">Posts per Influencer</div><input type="number" class="form-control" value="1"></div><div class="form-group"><div class="form-label">Stories per Influencer</div><input type="number" class="form-control" value="1"></div></div>
+      <div class="form-group"><div class="form-label">Upload Campaign Brief / Media</div><input type="file" class="form-control" multiple accept=".pdf,.jpg,.png,.mp4"></div>
+      <div class="form-group"><div class="form-label">Payment Release Trigger</div><select class="form-control"><option>Auto-release when all deliverables approved</option><option>Manual approval required</option><option>Milestone-based (partial releases)</option><option>After compliance verification</option></select></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('newCampaignModal')">Cancel</button><button class="btn btn-outline">Save Draft</button><button class="btn btn-primary">Create Campaign</button></div>
+  </div>
+</div>
+
+<!-- Add Influencer -->
+<div class="modal-overlay" id="addInfluencerModal">
+  <div class="modal">
+    <div class="modal-header"><h2 class="modal-title">Add Influencer</h2><button class="modal-close" onclick="closeModal('addInfluencerModal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-row"><div class="form-group"><div class="form-label">Full Name</div><input type="text" class="form-control" placeholder="Full name"></div><div class="form-group"><div class="form-label">Email</div><input type="email" class="form-control" placeholder="email@example.com"></div></div>
+      <div class="form-group"><div class="form-label">TikTok Handle</div><input type="text" class="form-control" placeholder="@username"></div>
+      <div class="form-group"><div class="form-label">Instagram Handle</div><input type="text" class="form-control" placeholder="@username"></div>
+      <div class="form-group"><div class="form-label">Facebook Page</div><input type="text" class="form-control" placeholder="Page name or URL"></div>
+      <div class="form-row"><div class="form-group"><div class="form-label">Primary Platform</div><select class="form-control"><option>Meta (Instagram)</option><option>Meta (Facebook)</option><option>TikTok</option><option>YouTube</option></select></div><div class="form-group"><div class="form-label">Niche / Category</div><input type="text" class="form-control" placeholder="Beauty, Tech, Lifestyle…"></div></div>
+      <div class="form-group"><div class="form-label">Payment Details (GCash / Bank / PayPal)</div><input type="text" class="form-control" placeholder="Payment info"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('addInfluencerModal')">Cancel</button><button class="btn btn-primary">Add Influencer</button></div>
+  </div>
+</div>
+
+<!-- Influencer Profile -->
+<div class="modal-overlay" id="influencerProfileModal">
+  <div class="modal modal-lg">
+    <div class="modal-header"><h2 class="modal-title" id="profileModalName">Influencer Profile</h2><button class="modal-close" onclick="closeModal('influencerProfileModal')">×</button></div>
+    <div class="modal-body">
+      <div class="flex-center mb-16" style="padding-bottom:16px;border-bottom:1px solid var(--rule)">
+        <div class="inf-av" id="profileModalAvatar" style="width:48px;height:48px;font-size:16px">—</div>
+        <div style="flex:1">
+          <div style="font-family:'Instrument Serif',serif;font-size:17px" id="profileModalFullName">—</div>
+          <div style="font-size:12px;color:var(--ink-4);margin-top:2px" id="profileModalMeta">—</div>
+        </div>
+        <div style="text-align:center"><div class="score-ring" style="width:44px;height:44px;font-size:14px;margin:0 auto">—</div><div style="font-size:10px;color:var(--ink-4);margin-top:4px">Trust Score</div></div>
+      </div>
+      <div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:0">
+        <div class="stat-card"><div class="stat-label">Avg Engagement</div><div class="stat-value green">—</div></div>
+        <div class="stat-card"><div class="stat-label">Campaigns Done</div><div class="stat-value">0</div></div>
+        <div class="stat-card"><div class="stat-label">Avg ROI</div><div class="stat-value amber">—</div></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('influencerProfileModal')">Close</button><button class="btn btn-primary" onclick="closeModal('influencerProfileModal');openModal('newCampaignModal')">Assign to Campaign</button></div>
+  </div>
+</div>
+
+<!-- Campaign Detail -->
+<div class="modal-overlay" id="campaignDetailModal">
+  <div class="modal modal-lg">
+    <div class="modal-header"><h2 class="modal-title" id="campDetailName">Campaign Detail</h2><button class="modal-close" onclick="closeModal('campaignDetailModal')">×</button></div>
+    <div class="modal-body">
+      <div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
+        <div class="stat-card"><div class="stat-label">Posts Submitted</div><div class="stat-value blue">0</div></div>
+        <div class="stat-card"><div class="stat-label">Compliance Rate</div><div class="stat-value amber">—</div></div>
+        <div class="stat-card"><div class="stat-label">Budget Used</div><div class="stat-value green">—</div></div>
+      </div>
+      <div class="form-group"><div class="form-label">Required Hashtags</div><div class="tag-list" id="campDetailHashtags" style="color:var(--ink-4);font-size:12.5px">—</div></div>
+      <div class="form-group"><div class="form-label">Key Messages</div><div class="form-control" style="height:auto;min-height:60px;color:var(--ink-3);font-size:12.5px" id="campDetailMessages">—</div></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('campaignDetailModal')">Close</button><button class="btn btn-primary">Edit Campaign</button></div>
+  </div>
+</div>
+
+<!-- Payment Adjustment -->
+<div class="modal-overlay" id="paymentAdjModal">
+  <div class="modal">
+    <div class="modal-header"><h2 class="modal-title">Adjust Payment</h2><button class="modal-close" onclick="closeModal('paymentAdjModal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><div class="form-label">Original Amount</div><input class="form-control" placeholder="₱0"></div>
+      <div class="form-group"><div class="form-label">Penalty Deductions</div><input class="form-control" placeholder="−₱0"></div>
+      <div class="form-group"><div class="form-label">Performance Bonus</div><input class="form-control" placeholder="₱0"></div>
+      <div class="form-group"><div class="form-label">Notes</div><textarea class="form-control" placeholder="Reason for adjustment…"></textarea></div>
+      <div class="form-group"><div class="form-label">Final Amount</div><input class="form-control" placeholder="₱0"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('paymentAdjModal')">Cancel</button><button class="btn btn-amber">Apply Adjustment</button></div>
+  </div>
+</div>
+
+<!-- Apply to Campaign -->
+<div class="modal-overlay" id="applyModal">
+  <div class="modal">
+    <div class="modal-header"><h2 class="modal-title">Apply to Campaign</h2><button class="modal-close" onclick="closeModal('applyModal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><div class="form-label">Influencer Profile</div><select class="form-control"><option>— Select Influencer —</option></select></div>
+      <div class="form-group"><div class="form-label">Proposed Rate (₱)</div><input type="number" class="form-control" placeholder="0"></div>
+      <div class="form-group"><div class="form-label">Message to Brand</div><textarea class="form-control" placeholder="Brief introduction and why you're a great fit…"></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('applyModal')">Cancel</button><button class="btn btn-primary">Submit Application</button></div>
+  </div>
+</div>
+
+<!-- Alerts -->
+<div class="modal-overlay" id="alertsModal">
+  <div class="modal">
+    <div class="modal-header"><h2 class="modal-title">Notifications</h2><button class="modal-close" onclick="closeModal('alertsModal')">×</button></div>
+    <div class="modal-body" id="alertsModalBody">
+      <div class="empty-state" style="padding:32px 0">
+        <div class="empty-desc">No notifications yet</div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('alertsModal')">Dismiss All</button></div>
+  </div>
+</div>
+
+<!-- Generate Contract -->
+<div class="modal-overlay" id="newContractModal">
+  <div class="modal">
+    <div class="modal-header"><h2 class="modal-title">Generate Contract</h2><button class="modal-close" onclick="closeModal('newContractModal')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><div class="form-label">Campaign</div><select class="form-control"><option>— Select Campaign —</option></select></div>
+      <div class="form-group"><div class="form-label">Influencer</div><select class="form-control"><option>— Select Influencer —</option></select></div>
+      <div class="form-group"><div class="form-label">Agreed Amount (₱)</div><input type="number" class="form-control" placeholder="0"></div>
+      <div class="form-group"><div class="form-label">Deliverables</div><textarea class="form-control" placeholder="e.g. 3 TikTok posts + 2 IG stories within campaign period"></textarea></div>
+      <div class="form-group"><div class="form-label">Payment Terms</div><textarea class="form-control" placeholder="e.g. 50% upfront, 50% on completion"></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('newContractModal')">Cancel</button><button class="btn btn-primary">Generate</button></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+<script>
+// ── Auth Guard ───────────────────────────────────────────────
+(function() {
+  const user = localStorage.getItem('kk_user');
+  if (!user) { window.location.href = 'auth.html'; return; }
+  try {
+    const u = JSON.parse(user);
+    // Company only — redirect influencers to their own dashboard
+    if (u.role === 'influencer') { window.location.href = 'influencer.html'; return; }
+    // Populate sidebar
+    const name = (u.first_name || '') + ' ' + (u.last_name || '');
+    const initials = ((u.first_name||'?')[0] + (u.last_name||'?')[0]).toUpperCase();
+    document.getElementById('sidebarAvatar').textContent = initials;
+    document.getElementById('sidebarName').textContent   = name.trim() || u.email;
+    document.getElementById('sidebarRole').textContent   = u.company_name || 'Company';
+  } catch { window.location.href = 'auth.html'; }
+})();
+
+function logout() {
+  localStorage.removeItem('kk_user');
+  localStorage.removeItem('kk_token');
+  window.location.href = 'auth.html';
+}
+</script>
+
+</body>
+</html>
